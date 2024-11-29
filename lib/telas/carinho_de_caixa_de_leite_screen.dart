@@ -1,9 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class CarinhoDeCaixaDeLeiteScreen extends StatelessWidget {
-  final String youtubeLink = "https://www.youtube.com/watch?v=5JUCwjvGGak&list=PLooqzTcqqZvmqNkoxBojvXcqHB9jeJhxV&index=4";
-
+class CarinhoDeCaixaDeLeiteScreen extends StatefulWidget {
   const CarinhoDeCaixaDeLeiteScreen({Key? key}) : super(key: key);
+
+  @override
+  State<CarinhoDeCaixaDeLeiteScreen> createState() =>
+      _CarinhoDeCaixaDeLeiteScreenState();
+}
+
+class _CarinhoDeCaixaDeLeiteScreenState
+    extends State<CarinhoDeCaixaDeLeiteScreen> {
+  // Link do vídeo no YouTube
+  final String youtubeLink =
+      "https://www.youtube.com/watch?v=5JUCwjvGGak&list=PLooqzTcqqZvmqNkoxBojvXcqHB9jeJhxV&index=4";
+
+  // Link do passo a passo
+  final String passoAPassoUrl =
+      "https://www.artesanatopassoapassoja.com.br/carrinho-de-caixa-de-leite-passo-passo/";
+
+  late YoutubePlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    // Inicializa o controlador do YouTube
+    _controller = YoutubePlayerController(
+      initialVideoId: YoutubePlayer.convertUrlToId(youtubeLink)!,
+      flags: const YoutubePlayerFlags(
+        autoPlay: false, // Vídeo não toca automaticamente
+        mute: false, // Vídeo não está mudo
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose(); // Libera o controlador ao sair da tela
+    super.dispose();
+  }
+
+  // Função para abrir URL
+  Future<void> _launchUrl(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      throw "Não foi possível abrir o link: $url";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,21 +72,13 @@ class CarinhoDeCaixaDeLeiteScreen extends StatelessWidget {
         child: Column(
           children: [
             // Área superior com o vídeo
-            GestureDetector(
-              onTap: () async {
-                // Ação ao tocar no vídeo
-              },
-              child: Container(
-                width: screenWidth,
-                height: screenHeight * 0.25,
-                color: Colors.black,
-                child: const Center(
-                  child: Icon(
-                    Icons.play_circle_fill,
-                    color: Colors.white,
-                    size: 50,
-                  ),
-                ),
+            SizedBox(
+              width: screenWidth,
+              height: screenHeight * 0.25,
+              child: YoutubePlayer(
+                controller: _controller,
+                showVideoProgressIndicator: true, // Mostra barra de progresso
+                progressIndicatorColor: Colors.red, // Cor da barra de progresso
               ),
             ),
             const Divider(),
@@ -51,9 +89,7 @@ class CarinhoDeCaixaDeLeiteScreen extends StatelessWidget {
                   _buildListTile(
                     icon: Icons.info,
                     title: "Passo a Passo",
-                    onTap: () {
-                      // Ação ao clicar
-                    },
+                    onTap: () => _launchUrl(passoAPassoUrl),
                   ),
                   _buildListTile(
                     icon: Icons.school,
@@ -119,7 +155,8 @@ class CarinhoDeCaixaDeLeiteScreen extends StatelessWidget {
                               child: ListTile(
                                 leading: const Icon(Icons.image, size: 40),
                                 title: Text("Criação ${index + 1}"),
-                                subtitle: const Text("Descrição da criação feita por um usuário."),
+                                subtitle: const Text(
+                                    "Descrição da criação feita por um usuário."),
                                 onTap: () {
                                   // Exibir detalhes da postagem
                                 },
