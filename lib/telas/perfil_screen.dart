@@ -1,7 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class PerfilScreen extends StatelessWidget {
+class PerfilScreen extends StatefulWidget {
   const PerfilScreen({Key? key}) : super(key: key);
+
+  @override
+  _PerfilScreenState createState() => _PerfilScreenState();
+}
+
+class _PerfilScreenState extends State<PerfilScreen> {
+  String userName = 'Usuár';
+  String userHandle = '@usuário';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    try {
+      final User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+        if (userDoc.exists) {
+          final data = userDoc.data()!;
+          final fullName = data['f_name'] ?? 'Usuário';
+          final firstName = fullName.split(' ').first;
+
+          setState(() {
+            userName = fullName;
+            userHandle = '@${firstName.toLowerCase()}';
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Erro ao buscar os dados do usuário: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,15 +58,15 @@ class PerfilScreen extends StatelessWidget {
             color: Colors.black,
           ),
           onPressed: () {
-            // Lógica para voltar à tela anterior
+            Navigator.pop(context);
           },
         ),
       ),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(
-            maxWidth: 400, // Largura máxima típica de smartphones
-            maxHeight: 800, // Altura máxima típica de smartphones
+            maxWidth: 400,
+            maxHeight: 800,
           ),
           child: SingleChildScrollView(
             child: Padding(
@@ -38,29 +80,26 @@ class PerfilScreen extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           radius: 40,
-                          backgroundImage: AssetImage('lib/assets/profile.jpg'),
+                          backgroundColor: Colors.grey.shade200,
+                          child: const Icon(
+                            Icons.person,
+                            size: 40,
+                            color: Colors.grey,
+                          ),
                         ),
                         const SizedBox(height: 8),
-                        const Text(
-                          'MAY_costa',
-                          style: TextStyle(
+                        Text(
+                          userName,
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 4),
-                        const Text(
-                          '@MAY_costa2022',
-                          style: TextStyle(
+                        Text(
+                          userHandle,
+                          style: const TextStyle(
                             fontSize: 14,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        const Text(
-                          'Entrou Março 2022',
-                          style: TextStyle(
-                            fontSize: 12,
                             color: Colors.grey,
                           ),
                         ),
@@ -96,11 +135,11 @@ class PerfilScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   GridView.count(
-                    shrinkWrap: true, // Permite ajustar o Grid ao conteúdo
-                    crossAxisCount: 2, // Define duas colunas
-                    mainAxisSpacing: 12, // Espaçamento entre linhas
-                    crossAxisSpacing: 12, // Espaçamento entre colunas
-                    childAspectRatio: 4 / 3, // Proporção menor para os cards
+                    shrinkWrap: true,
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: 4 / 3,
                     children: [
                       _buildStatisticItem(Icons.military_tech, 'Eco-Herói', 'Liga atual'),
                       _buildStatisticItem(Icons.leaderboard, '0', 'Top 3 melhores'),
@@ -135,9 +174,6 @@ class PerfilScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
 
-                  // Lista de Amigos
-                  _buildFriendItem('Matteus', '4367 XP', Colors.blue),
-                 
                   const SizedBox(height: 24),
 
                   // Convidar Amigos
@@ -178,7 +214,7 @@ class PerfilScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: Color(0xFF4CAF50), size: 30), // Ícone ajustado para verde
+          Icon(icon, color: const Color(0xFF4CAF50), size: 30),
           const SizedBox(height: 8),
           Text(
             value,
@@ -192,24 +228,6 @@ class PerfilScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildFriendItem(String name, String xp, Color color) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: color.withOpacity(0.2),
-        child: Text(
-          name[0],
-          style: TextStyle(color: color),
-        ),
-      ),
-      title: Text(name),
-      subtitle: Text(xp),
-      trailing: const Icon(Icons.more_horiz),
-      onTap: () {
-        // Lógica para interagir com o amigo
-      },
     );
   }
 
@@ -228,14 +246,13 @@ class PerfilScreen extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Fecha o diálogo
+                Navigator.of(context).pop();
               },
               child: const Text('Cancelar'),
             ),
             ElevatedButton(
               onPressed: () {
-                // Lógica para adicionar amigo
-                Navigator.of(context).pop(); // Fecha o diálogo
+                Navigator.of(context).pop();
               },
               child: const Text('Adicionar'),
             ),

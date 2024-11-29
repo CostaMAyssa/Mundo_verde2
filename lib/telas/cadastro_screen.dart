@@ -32,19 +32,13 @@ Future<void> registerUser({
 
     print('Dados do usuário adicionados ao Firestore.');
   } on FirebaseAuthException catch (e) {
-    if (e.code == 'weak-password') {
-      print('A senha fornecida é muito fraca.');
-    } else if (e.code == 'email-already-in-use') {
-      print('Este email já está em uso.');
-    } else {
-      print('Erro no Firebase Authentication: ${e.message}');
-    }
+    // Lançar erro novamente para propagar
+    throw Exception('Erro no Firebase Authentication: ${e.message}');
   } catch (e) {
-    print('Erro ao salvar no Firestore: $e');
+    // Lançar qualquer outro erro
+    throw Exception('Erro ao salvar no Firestore: $e');
   }
 }
-
-
 
 class CadastroScreen extends StatefulWidget {
   const CadastroScreen({Key? key}) : super(key: key);
@@ -184,7 +178,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              
               TextField(
                 controller: emailController,
                 decoration: InputDecoration(
@@ -232,8 +225,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-
-
               ElevatedButton(
                 onPressed: () async {
                   // Validar se os campos estão preenchidos corretamente
@@ -269,7 +260,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                       const SnackBar(content: Text('Cadastro realizado com sucesso!')),
                     );
 
-                    // Navegar para a tela HomeScreen
+                    // Redireciona para a tela HomeScreen apenas se o cadastro for bem-sucedido
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => const HomeScreen()),
@@ -292,10 +283,10 @@ class _CadastroScreenState extends State<CadastroScreen> {
                   ),
                 ),
                 child: const Text(
-                  'CADASTRAR',
+                  'Cadastrar',
                   style: TextStyle(
+                    fontFamily: 'Arial',
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
