@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:mundo_verde/telas/home_screen.dart'; // Certifique-se de ajustar o caminho da tela HomeScreen
+import 'package:mundo_verde/telas/home_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -32,10 +32,8 @@ Future<void> registerUser({
 
     print('Dados do usuário adicionados ao Firestore.');
   } on FirebaseAuthException catch (e) {
-    // Lançar erro novamente para propagar
     throw Exception('Erro no Firebase Authentication: ${e.message}');
   } catch (e) {
-    // Lançar qualquer outro erro
     throw Exception('Erro ao salvar no Firestore: $e');
   }
 }
@@ -125,9 +123,8 @@ class _CadastroScreenState extends State<CadastroScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
-              // Exibe a logo
               Image.asset(
-                'lib/assets/logo.png', // Certifique-se de que o caminho está correto
+                'lib/assets/logo.png',
                 height: 150,
                 fit: BoxFit.contain,
               ),
@@ -227,7 +224,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () async {
-                  // Validar se os campos estão preenchidos corretamente
+                  // Validação
                   if (nomeController.text.trim().isEmpty ||
                       celularController.text.trim().isEmpty ||
                       emailController.text.trim().isEmpty ||
@@ -255,7 +252,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
                       address: _currentPosition,
                     );
 
-                    // Exibir mensagem de sucesso
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Cadastro realizado com sucesso!')),
                     );

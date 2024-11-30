@@ -18,7 +18,7 @@ class OficinaSustentavelScreen extends StatelessWidget {
             color: Colors.black,
           ),
           onPressed: () {
-            Navigator.pop(context); // Volta para a tela anterior
+            Navigator.pop(context);
           },
         ),
         title: const Text(
@@ -70,7 +70,7 @@ class OficinaSustentavelScreen extends StatelessWidget {
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(
-            maxWidth: 400, // Largura máxima para telas de celular
+            maxWidth: 400,
           ),
           child: SingleChildScrollView(
             child: Padding(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:mundo_verde/telas/home_screen.dart'; // Ajuste o caminho conforme necessário
-import 'package:mundo_verde/telas/cadastro_screen.dart'; // Certifique-se de ajustar o caminho
+import 'package:mundo_verde/telas/home_screen.dart';
+import 'package:mundo_verde/telas/cadastro_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -25,7 +25,6 @@ class _LoginScreenState extends State<LoginScreen> {
           .signInWithEmailAndPassword(email: email, password: password);
       print('Usuário logado: ${userCredential.user?.uid}');
 
-      // Redireciona para a tela HomeScreen após o login bem-sucedido
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),

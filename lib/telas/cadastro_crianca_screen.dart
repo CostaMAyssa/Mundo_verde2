@@ -113,7 +113,7 @@ class _CadastroCriancaScreenState extends State<CadastroCriancaScreen> {
                 controller: nomeController,
                 decoration: InputDecoration(
                   labelText: 'Nome da Criança',
-                  labelStyle: const TextStyle(color: Color(0xFF4CAF50)),
+                  labelStyle: const TextStyle(color: Color(0xFF4CAF50), fontSize: 16, fontWeight: FontWeight.normal),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
                     borderSide: const BorderSide(color: Color(0xFF4CAF50)),
@@ -133,7 +133,7 @@ class _CadastroCriancaScreenState extends State<CadastroCriancaScreen> {
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: 'Idade da Criança',
-                  labelStyle: const TextStyle(color: Color(0xFF4CAF50)),
+                  labelStyle: const TextStyle(color: Color(0xFF4CAF50), fontSize: 16, fontWeight: FontWeight.normal),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
                     borderSide: const BorderSide(color: Color(0xFF4CAF50)),
@@ -152,7 +152,7 @@ class _CadastroCriancaScreenState extends State<CadastroCriancaScreen> {
                 controller: celularController,
                 decoration: InputDecoration(
                   labelText: 'Telefone para contato',
-                  labelStyle: const TextStyle(color: Color(0xFF4CAF50)),
+                  labelStyle: const TextStyle(color: Color(0xFF4CAF50), fontSize: 16, fontWeight: FontWeight.normal),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
                     borderSide: const BorderSide(color: Color(0xFF4CAF50)),

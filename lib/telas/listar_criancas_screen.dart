@@ -20,14 +20,12 @@ class _ListarCriancasScreenState extends State<ListarCriancasScreen> {
     _loadKidsData(); // Carrega os dados das crianças
   }
 
-  // Função para carregar os dados das crianças
   Future<void> _loadKidsData() async {
     try {
       // Obtém o campo 'kids' do documento do usuário logado
       DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
       List<dynamic> kidsUids = userDoc['kids'] ?? []; // Lista de UIDs das crianças
 
-      // Se não houver crianças cadastradas, retorna
       if (kidsUids.isEmpty) {
         setState(() {
           kids = [];
@@ -86,7 +84,7 @@ class _ListarCriancasScreenState extends State<ListarCriancasScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lista de Crianças'),
-        backgroundColor: const Color(0xFF4CAF50), // Usando verde
+        backgroundColor: Color(0xFFF9F9F9), 
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -104,7 +102,7 @@ class _ListarCriancasScreenState extends State<ListarCriancasScreen> {
                     ),
                     child: ListTile(
                       contentPadding: const EdgeInsets.all(16.0),
-                      title: Text(kid['f_name'] ?? 'Nome não disponível', style: const TextStyle(color: Color(0xFF4CAF50))),
+                      title: Text(kid['f_name'] ?? 'Nome não disponível', style: const TextStyle(color: Color(0xFF4CAF50), fontSize: 16, fontWeight: FontWeight.normal)),
                       subtitle: Text('Idade: ${kid['age'] ?? 'Desconhecida'}\nTelefone: ${kid['phone'] ?? 'Desconhecido'}'),
                       trailing: IconButton(
                         icon: const Icon(Icons.delete, color: Color(0xFF4CAF50)),

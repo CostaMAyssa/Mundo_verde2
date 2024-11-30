@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mundo_verde/telas/oficina_sustentavel_screen.dart';
-import 'package:mundo_verde/telas/cadastro_crianca_screen.dart'; // Importe a tela de cadastro de crianças
-import 'package:mundo_verde/telas/listar_criancas_screen.dart'; // Importe a tela de listagem de crianças
+import 'package:mundo_verde/telas/cadastro_crianca_screen.dart'; 
+import 'package:mundo_verde/telas/listar_criancas_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -11,9 +11,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0; // Índice da aba selecionada
+  int _selectedIndex = 0; 
 
-  // Função que será chamada quando a aba for clicada
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -30,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9F9), // Fundo claro
+      backgroundColor: const Color(0xFFF9F9F9),
       body: _screens[_selectedIndex], // Exibe a tela com base no índice selecionado
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -64,12 +63,10 @@ class HomeContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Banner Superior
           Stack(
             children: [
-              // Fundo do banner
               Container(
-                height: 200, // Altura do banner
+                height: 200,
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
@@ -83,7 +80,7 @@ class HomeContent extends StatelessWidget {
                 height: 200,
                 width: double.infinity,
                 child: Image.asset(
-                  'lib/assets/telaverde.png', // Caminho da imagem
+                  'lib/assets/telaverde.png',
                   fit: BoxFit.cover,
                 ),
               ),
@@ -162,7 +159,7 @@ class HomeContent extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
-          // Seção de Atividades
+          // Seção de atividades
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: const Text(
@@ -176,7 +173,7 @@ class HomeContent extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
-          // Lista de Atividades em Grid
+          // Lista de Atividades em um grid
           GridView.count(
             crossAxisCount: 1,
             crossAxisSpacing: 16,
@@ -198,7 +195,7 @@ class HomeContent extends StatelessWidget {
     );
   }
 
-  // Filtros de categorias (Chips)
+  // Filtros de categorias
   Widget _buildFilterChip(String label, {bool selected = false}) {
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
@@ -220,7 +217,7 @@ class HomeContent extends StatelessWidget {
     );
   }
 
-  // Cartão de Atividades
+  // Cartão de atividades
   Widget _buildProjectCard(
     String userName,
     String projectTitle,

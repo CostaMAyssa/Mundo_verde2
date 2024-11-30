@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 
 class CarinhoDeCaixaDeLeiteScreen extends StatefulWidget {
   const CarinhoDeCaixaDeLeiteScreen({Key? key}) : super(key: key);
@@ -12,15 +13,14 @@ class CarinhoDeCaixaDeLeiteScreen extends StatefulWidget {
 
 class _CarinhoDeCaixaDeLeiteScreenState
     extends State<CarinhoDeCaixaDeLeiteScreen> {
-  // Link do vídeo no YouTube
+  // Links do vídeo e passo a passo
   final String youtubeLink =
       "https://www.youtube.com/watch?v=5JUCwjvGGak&list=PLooqzTcqqZvmqNkoxBojvXcqHB9jeJhxV&index=4";
-
-  // Link do passo a passo
   final String passoAPassoUrl =
       "https://www.artesanatopassoapassoja.com.br/carrinho-de-caixa-de-leite-passo-passo/";
 
   late YoutubePlayerController _controller;
+  String _iaResponse = ''; // Resposta da IA
 
   @override
   void initState() {
@@ -29,15 +29,15 @@ class _CarinhoDeCaixaDeLeiteScreenState
     _controller = YoutubePlayerController(
       initialVideoId: YoutubePlayer.convertUrlToId(youtubeLink)!,
       flags: const YoutubePlayerFlags(
-        autoPlay: false, // Vídeo não toca automaticamente
-        mute: false, // Vídeo não está mudo
+        autoPlay: false,
+        mute: false,
       ),
     );
   }
 
   @override
   void dispose() {
-    _controller.dispose(); // Libera o controlador ao sair da tela
+    _controller.dispose();
     super.dispose();
   }
 
@@ -49,6 +49,61 @@ class _CarinhoDeCaixaDeLeiteScreenState
     } else {
       throw "Não foi possível abrir o link: $url";
     }
+  }
+
+  // Função para chamar o gemini
+  Future<void> _generateTips(String age) async {
+    try {
+      final response = await Gemini.instance.prompt(parts: [
+        Part.text(
+            "Você é um assistente social para crianças de diversas idades. O seu objetivo é explicar como fazer um projeto de reciclagem de carrinho de caixa de leite. Sua primeira resposta já aparecerá para uma criança de $age anos, então ensine de forma personalizada para uma criança dessa idade"),
+      ]);
+      setState(() {
+        _iaResponse = response?.output ??
+            'Não foi possível gerar dicas no momento. Tente novamente mais tarde.';
+      });
+    } catch (e) {
+      setState(() {
+        _iaResponse = 'Erro ao gerar dicas: $e';
+      });
+    }
+  }
+
+  // Mostra o diálogo para inserir a idade
+  void _showAgeDialog() {
+    final TextEditingController ageController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Insira a idade da criança"),
+          content: TextField(
+            controller: ageController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              hintText: "Digite a idade em anos",
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancelar"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final age = ageController.text.trim();
+                if (age.isNotEmpty) {
+                  Navigator.pop(context);
+                  _generateTips(age);
+                }
+              },
+              child: const Text("Confirmar"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -77,8 +132,8 @@ class _CarinhoDeCaixaDeLeiteScreenState
               height: screenHeight * 0.25,
               child: YoutubePlayer(
                 controller: _controller,
-                showVideoProgressIndicator: true, // Mostra barra de progresso
-                progressIndicatorColor: Colors.red, // Cor da barra de progresso
+                showVideoProgressIndicator: true,
+                progressIndicatorColor: Colors.red,
               ),
             ),
             const Divider(),
@@ -92,81 +147,40 @@ class _CarinhoDeCaixaDeLeiteScreenState
                     onTap: () => _launchUrl(passoAPassoUrl),
                   ),
                   _buildListTile(
+                    icon: Icons.lightbulb,
+                    title: "Passo a Passo com IA",
+                    onTap: _showAgeDialog,
+                  ),
+                  _buildListTile(
                     icon: Icons.school,
                     title: "Materiais Necessários",
-                    onTap: () {
-                      // Ação ao clicar
-                    },
+                    onTap: () {},
                   ),
                   _buildListTile(
                     icon: Icons.share,
                     title: "Compartilhar este projeto",
-                    onTap: () {
-                      // Ação ao clicar
-                    },
+                    onTap: () {},
                   ),
                   _buildListTile(
                     icon: Icons.note,
                     title: "Doe este projeto para o bazar solidário Mundo Verde",
-                    onTap: () {
-                      // Ação ao clicar
-                    },
+                    onTap: () {},
                   ),
                   _buildListTile(
                     icon: Icons.star_border,
                     title: "Adicionar projeto aos favoritos",
-                    onTap: () {
-                      // Ação ao clicar
-                    },
+                    onTap: () {},
                   ),
                   const Divider(),
-                  // Nova área: Espaço Criativo
-                  Padding(
-                    padding: EdgeInsets.all(screenWidth * 0.04),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Espaço Criativo",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: screenHeight * 0.02),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            // Navegar para a tela de adicionar postagem
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const AddPostScreen(),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.add),
-                          label: const Text("Mostre sua Criação"),
-                        ),
-                        SizedBox(height: screenHeight * 0.02),
-                        // Exibição de postagens (exemplo de post estático)
-                        Column(
-                          children: List.generate(3, (index) {
-                            return Card(
-                              child: ListTile(
-                                leading: const Icon(Icons.image, size: 40),
-                                title: Text("Criação ${index + 1}"),
-                                subtitle: const Text(
-                                    "Descrição da criação feita por um usuário."),
-                                onTap: () {
-                                  // Exibir detalhes da postagem
-                                },
-                              ),
-                            );
-                          }),
-                        ),
-                      ],
+                  if (_iaResponse.isNotEmpty) ...[
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        _iaResponse,
+                        style: const TextStyle(fontSize: 16),
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),
@@ -176,7 +190,6 @@ class _CarinhoDeCaixaDeLeiteScreenState
     );
   }
 
-  // Widget genérico para ListTile
   Widget _buildListTile({
     required IconData icon,
     required String title,
@@ -189,57 +202,6 @@ class _CarinhoDeCaixaDeLeiteScreenState
         style: const TextStyle(fontSize: 16),
       ),
       onTap: onTap,
-    );
-  }
-}
-
-class AddPostScreen extends StatelessWidget {
-  const AddPostScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    const double screenHeight = 800;
-    const double screenWidth = 400;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Adicionar Criação",
-          style: TextStyle(color: Colors.black),
-        ),
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.black),
-        elevation: 0,
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(screenWidth * 0.05),
-        child: Column(
-          children: [
-            const TextField(
-              decoration: InputDecoration(
-                labelText: "Título da criação",
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: screenHeight * 0.02),
-            const TextField(
-              decoration: InputDecoration(
-                labelText: "Descrição",
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 5,
-            ),
-            SizedBox(height: screenHeight * 0.02),
-            ElevatedButton(
-              onPressed: () {
-                // Função para salvar a postagem
-                Navigator.pop(context);
-              },
-              child: const Text("Salvar"),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
